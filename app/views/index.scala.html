@@ -1,4 +1,4 @@
-@(todoList: List[models.Todo], errors: String)
+@(todoList: List[Application.Todo], errors: String)
 
 @main("TodoMVC") {
     <p>
@@ -15,17 +15,17 @@
             <input type="checkbox" id="toggle-all"/>
             <label for="toggle-all">Mark all as complete</label>
             <ul id="todo-list">
-                @for((todo, idx) <- todoList.zipWithIndex) {
-                    <li data-id="@idx" @if(todo.done){ class="completed" } >
+                @for(todo <- todoList) {
+                    <li data-id="@todo.id" @if(todo.done){ class="completed" } >
                         <div class="view">
-                            <form action="@routes.Application.flipTodoDone(idx)" method="POST">
+                            <form action="@routes.Application.flipTodoDone(todo.id)" method="POST">
                                 <input type="checkbox"
                                        class="toggle"
                                        @if(todo.done){ checked="checked" }
                                        onchange="this.form.submit()"/>
                             </form>
-                            <label for="todo_@idx">@todo.todo</label>
-                            <form action="@routes.Application.removeTodo(idx)" method="POST">
+                            <label for="todo_@todo.id">@todo.todo</label>
+                            <form action="@routes.Application.removeTodo(todo.id)" method="POST">
                                 <button class="destroy"
                                         onclick="this.form.submit()">
                                 </button>
