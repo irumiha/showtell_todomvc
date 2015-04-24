@@ -1,0 +1,19 @@
+{{#todos}}
+<li {{#done}}
+    class="completed"
+    {{/done}}
+    >
+
+    <div class="view">
+        <input type="checkbox"
+               class="toggle"
+               {{#done}}
+               checked="checked"
+               {{/done}}
+               data-id="{{ id }}"/>
+        <label for="todo_{{ id }}">{{ todo }}</label>
+        <button class="destroy" data-id="{{ id }}">
+        </button>
+    </div>
+</li>
+{{/todos}}

@@ -1,40 +1,20 @@
-@(todoList: List[Application.Todo], errors: String)
+@(todos: List[Application.Todo])
 
 @main("TodoMVC") {
-    <p>
-        @errors
-    </p>
     <section id="todoapp">
         <header id="header">
             <h1>Todos</h1>
-            <form action="@routes.Application.createTodo()" method="POST">
-                <input name="todo" type="text" id="new-todo" placeholder="What needs to be done" autofocus autocomplete="off"/>
-            </form>
+            <input name="todo" type="text" id="new-todo" placeholder="What needs to be done" autofocus autocomplete="off"/>
         </header>
         <section id="main">
             <input type="checkbox" id="toggle-all"/>
             <label for="toggle-all">Mark all as complete</label>
-            <ul id="todo-list">
-                @for(todo <- todoList) {
-                    <li data-id="@todo.id" @if(todo.done){ class="completed" } >
-                        <div class="view">
-                            <form action="@routes.Application.flipTodoDone(todo.id)" method="POST">
-                                <input type="checkbox"
-                                       class="toggle"
-                                       @if(todo.done){ checked="checked" }
-                                       onchange="this.form.submit()"/>
-                            </form>
-                            <label for="todo_@todo.id">@todo.todo</label>
-                            <form action="@routes.Application.removeTodo(todo.id)" method="POST">
-                                <button class="destroy"
-                                        onclick="this.form.submit()">
-                                </button>
-                            </form>
-                        </div>
-                    </li>
-                }
+            <ul id="todo-list" data-resource-link="@routes.TodoApi.todoResourceList()">
             </ul>
         </section>
     </section>
 
+    <script src="@routes.Assets.at("lib/underscorejs/underscore-min.js")"></script>
+    <script src="@routes.Assets.at("lib/mustachejs/mustache.js")"></script>
+    <script src="@routes.Assets.at("cs/todo.js")"></script>
 }

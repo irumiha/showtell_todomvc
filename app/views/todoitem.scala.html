@@ -1,0 +1,12 @@
+@(todo: Application.Todo)
+
+<li data-id="@todo.id" @if(todo.done){ class="completed" } >
+    <div class="view">
+        <input type="checkbox"
+               class="toggle"
+               @if(todo.done){ checked="checked" }/>
+        <label for="todo_@todo.id">@todo.todo</label>
+        <button class="destroy">
+        </button>
+    </div>
+</li>
