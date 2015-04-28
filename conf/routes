@@ -10,6 +10,8 @@ POST          /todoresource             controllers.TodoApi.createTodoResource
 POST          /todoresource/:idx        controllers.TodoApi.updateTodoResource(idx: Int)
 DELETE        /todoresource/:idx        controllers.TodoApi.deleteTodoResource(idx: Int)
 
+GET           /todorealtime             controllers.RealtimeApi.wssocket
+
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file             controllers.Assets.at(path="/public", file)
 

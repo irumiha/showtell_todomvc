@@ -1,4 +1,4 @@
-@(todos: List[Application.Todo])
+@()(implicit request: RequestHeader)
 
 @main("TodoMVC") {
     <section id="todoapp">
@@ -9,7 +9,9 @@
         <section id="main">
             <input type="checkbox" id="toggle-all"/>
             <label for="toggle-all">Mark all as complete</label>
-            <ul id="todo-list" data-resource-link="@routes.TodoApi.todoResourceList()">
+            <ul id="todo-list"
+                data-resource-link="@routes.TodoApi.todoResourceList()"
+                data-realtime-link="@routes.RealtimeApi.wssocket.webSocketURL()">
             </ul>
         </section>
     </section>

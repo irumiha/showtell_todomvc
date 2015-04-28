@@ -1,23 +1,16 @@
 package controllers
 
-import controllers.Application.Todo
 import play.api._
 import play.api.db.slick._
 import play.api.mvc._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
-import models.TodoSchema
+import models.TodoSchema._
 
 import scala.slick.driver.H2Driver.simple._
 
-import scala.slick.jdbc.{StaticQuery => Q}
-import Q.interpolation
-
-
 object TodoApi extends Controller {
-
-  case class Todo(id: Option[Int], todo: String, done: Boolean)
 
   implicit val todoReads: Reads[Todo] = (
     (JsPath \ "id").read[Option[Int]] and
@@ -26,16 +19,16 @@ object TodoApi extends Controller {
     )(Todo.apply _)
 
   def todoResourceList() = DBAction { implicit rs =>
-    val todos =
-      TodoSchema.todos.sortBy(_.id.desc).list.map {
-        case (id, todo, done) => JsObject(Seq(
-          "id" -> JsNumber(id),
+    val currentTodos =
+      todos.sortBy(_.id.desc).list.map {
+        case Todo(id,todo,done) => JsObject(Seq(
+          "id" -> id.map(JsNumber(_)).getOrElse(JsNull),
           "todo" -> JsString(todo),
           "done" -> JsBoolean(done)
         ))
       }
 
-    Ok(JsObject(Seq("todos" -> JsArray(todos))))
+    Ok(JsObject(Seq("todos" -> JsArray(currentTodos))))
   }
 
   def createTodoResource() = DBAction(BodyParsers.parse.json) { implicit rs =>
@@ -46,7 +39,7 @@ object TodoApi extends Controller {
         BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors)))
       },
       todo => {
-        TodoSchema.todos.map(t => (t.todo, t.done)) +=(todo.todo, todo.done)
+        todos.map(t => (t.todo, t.done)) +=(todo.todo, todo.done)
         Ok(Json.obj("status" -> "OK", "message" -> "Todo item saved."))
       })
   }
@@ -59,7 +52,7 @@ object TodoApi extends Controller {
         BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors)))
       },
       todo => {
-          TodoSchema.todos
+          todos
             .filter(_.id === idx)
             .map(t => (t.todo, t.done))
             .update(todo.todo, todo.done)
@@ -70,9 +63,7 @@ object TodoApi extends Controller {
 
   def deleteTodoResource(idx: Int) = DBAction { implicit rs =>
 
-    TodoSchema.todos
-      .filter(_.id === idx)
-      .delete
+    todos.filter(_.id === idx).delete
 
     Ok(Json.obj("status" -> "OK", "message" -> "Todo item maybe removed."))
   }
